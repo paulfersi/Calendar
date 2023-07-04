@@ -59,7 +59,7 @@ public class CalendarController {
 
     @FXML
     private void handleAddButton() {
-        handleDayClick(new Matrix(LocalDate.now()));
+        DatabaseController.openDialogPane(new Matrix(LocalDate.now()));
     }
 
     private void setSingleBox(Matrix cell, Text text, Color color) {
