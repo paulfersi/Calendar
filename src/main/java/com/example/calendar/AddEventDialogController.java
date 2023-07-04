@@ -37,6 +37,7 @@ public class AddEventDialogController {
         endDatePicker.setValue(cell.getDate());
     }
 
+
     void update() {
         event.setTitle(titleField.getText());
         event.setStartDate(startDatePicker.getValue());
@@ -46,7 +47,8 @@ public class AddEventDialogController {
         int eHours = -1;
         int eMinutes = -1;
         LocalTime startTime = LocalTime.MAX;
-        LocalTime endTime = LocalTime.MAX;;
+        LocalTime endTime = LocalTime.MAX;
+        /*start time*/
         try {
             sHours = Integer.parseInt(hourStartField.getText());
             sMinutes = Integer.parseInt(minuteStartField.getText());
@@ -56,6 +58,7 @@ public class AddEventDialogController {
         }
         event.setStartTime(startTime);
 
+        /*end time*/
         try {
             eHours = Integer.parseInt(hourEndField.getText());
             eMinutes = Integer.parseInt(minuteEndField.getText());

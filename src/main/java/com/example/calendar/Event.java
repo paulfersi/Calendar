@@ -85,14 +85,14 @@ public class Event {
         return Objects.hash(Title, startDate, startTime, endDate, endTime, Description);
     }
 
+
     public static void checkEvent(Event e) {
         if (e.startDate.isAfter(e.endDate)) {
             throw new IllegalArgumentException();
         }
-        if (e.startTime.isAfter(e.endTime) && e.getStartDate().isEqual(e.getEndDate())) {   //verifico che non sia il
-            // caso in cui enddate sia un giorno diverso da startdate, solo in tal caso sarebbe
-            // accettabile
-            // che starttime sia dopo endtime
+        if (e.startTime.isAfter(e.endTime) && e.getStartDate().isEqual(e.getEndDate())) {
+            /**verifico che non sia il
+            caso in cui enddate sia un giorno diverso da startdate, solo in tal caso sarebbe accettabile che starttime sia dopo endtime **/
             throw new IllegalArgumentException();
         }
     }

@@ -73,7 +73,7 @@
                                         <Insets right="15.0" top="5.0" />
                                     </HBox.margin>
                                 </DatePicker>
-                                <TextField fx:id="hourStartField" prefHeight="25.0" prefWidth="30.0" promptText="00">
+                                <TextField fx:id="hourStartField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00">
                                     <HBox.margin>
                                         <Insets right="5.0" top="5.0" />
                                     </HBox.margin>
@@ -83,7 +83,7 @@
                                         <Insets />
                                     </HBox.margin>
                                 </Label>
-                                <TextField fx:id="minuteStartField" prefHeight="25.0" prefWidth="30.0" promptText="00">
+                                <TextField fx:id="minuteStartField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00">
                                     <HBox.margin>
                                         <Insets left="5.0" top="5.0" />
                                     </HBox.margin>
@@ -97,7 +97,7 @@
                                         <Insets right="15.0" top="5.0" />
                                     </HBox.margin>
                                 </DatePicker>
-                                <TextField fx:id="hourEndField" prefHeight="25.0" prefWidth="30.0" promptText="00">
+                                <TextField fx:id="hourEndField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00">
                                     <HBox.margin>
                                         <Insets right="5.0" top="5.0" />
                                     </HBox.margin>
@@ -107,7 +107,7 @@
                                         <Insets />
                                     </HBox.margin>
                                 </Label>
-                                <TextField fx:id="minuteEndField" prefHeight="25.0" prefWidth="30.0" promptText="00">
+                                <TextField fx:id="minuteEndField" alignment="CENTER" prefHeight="35.0" prefWidth="32.0" promptText="00">
                                     <HBox.margin>
                                         <Insets left="5.0" top="5.0" />
                                     </HBox.margin>

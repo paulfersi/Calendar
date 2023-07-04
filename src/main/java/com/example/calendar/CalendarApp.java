@@ -13,6 +13,7 @@ public class CalendarApp extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(CalendarApp.class.getResource("calendar-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 700, 700);
         stage.setTitle("Calendar");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
     }

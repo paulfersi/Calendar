@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -34,11 +35,7 @@ public class CalendarController {
     private Text monthField;
 
     private LocalDate currentDate;
-    private Map<Matrix, List<Event>> eventsMap = new HashMap<>();
-    /**
-     * Mappa che associa ogni lista di eventi con
-     * la sua cella
-     **/
+
 
     final int NUM_CELLS_TOT = 42;
 
@@ -127,31 +124,27 @@ public class CalendarController {
     }
 
     private void handleDayClick(Matrix cell) {
-
-        try {
+        try{
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("add-event-view.fxml"));
+            loader.setLocation(getClass().getResource("daily-view.fxml"));
             DialogPane view = loader.load();
-            AddEventDialogController controller = loader.getController();
+            DatabaseController controller = loader.getController();
 
             controller.setIntestation(cell);
 
-            // Create the dialog
             Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle("New Event");
+            dialog.setTitle("Daily View");
             dialog.initModality(Modality.WINDOW_MODAL);
             dialog.setDialogPane(view);
-
             // Show the dialog and wait until the user closes it
             Optional<ButtonType> clickedButton = dialog.showAndWait();
-            if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.APPLY) {
-                controller.update();
-                Event event = controller.getEvent();
-               insertData(event);
-                List<Event> events = eventsMap.getOrDefault(cell, new ArrayList<>());
-                events.add(event);
-                eventsMap.put(cell, events);
+
+            if (clickedButton.equals(ButtonType.CLOSE)) {
+                System.out.println("data: " + cell.getDate());
+                dialog.close();
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
