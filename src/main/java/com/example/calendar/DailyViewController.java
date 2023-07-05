@@ -21,15 +21,20 @@ public class DailyViewController {
     static Connection connection = DataBaseUtil.getConnection();
 
     @FXML
-    private TableView<Event> tableView;
+    private static TableView<Event> tableView;
 
     @FXML
     private TableColumn<Event,String> timeColumn;
 
     @FXML
-    private TableColumn<Event,String> titleColumn;
+    private static TableColumn<Event,String> titleColumn;
     @FXML
     private Label headerLabel;
+
+    public static void update(LocalDate selectedDate) {
+        refreshTable(tableView,selectedDate);
+    }
+
     void setIntestation(Matrix cell) {
         selectedDate = cell.getDate();
         headerLabel.setText(cell.getDate().getDayOfWeek().toString() + " , " + cell.getDate().toString());
@@ -62,6 +67,7 @@ public class DailyViewController {
                 controller.update();
                 Event event = controller.getEvent();
                 insertData(event);
+                refreshTable(tableView,cell.getDate());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,10 +84,46 @@ public class DailyViewController {
             preparedStatement.setTime(5, Time.valueOf(event.getEndTime()));
             preparedStatement.setString(6, event.getDescription());
             preparedStatement.executeUpdate(); // Execute the update query
+            System.out.println(event.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public static void refreshTable(TableView<Event> tableView,LocalDate selectedDate){
+        String query = "SELECT id, Title, StartDate, StartTime, EndDate, EndTime, Description FROM event " +
+                "WHERE (StartDate <= ? AND EndDate >= ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            // Imposta i parametri per la query
+            statement.setDate(1, Date.valueOf(selectedDate));
+            statement.setDate(2, Date.valueOf(selectedDate));
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                // Recupera i dati dal resultSet della query
+                int id = resultSet.getInt("id");
+                String title = resultSet.getString("Title");
+                LocalDate startDate = resultSet.getDate("StartDate").toLocalDate();
+                LocalTime startTime = resultSet.getTime("StartTime").toLocalTime();
+                LocalDate endDate = resultSet.getDate("EndDate").toLocalDate();
+                LocalTime endTime = resultSet.getTime("EndTime").toLocalTime();
+                String description = resultSet.getString("Description");
+
+                Event event = new Event(id, title, startDate, startTime, endDate, endTime, description);
+
+
+                titleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
+
+                tableView.getItems().add(event);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
 
 
 }

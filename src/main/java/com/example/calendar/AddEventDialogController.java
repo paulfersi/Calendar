@@ -70,6 +70,7 @@ public class AddEventDialogController {
 
         event.setDescription(descriptionField.getText());
 
+
         try {
             Event.checkEvent(event);
         } catch (Exception e) {

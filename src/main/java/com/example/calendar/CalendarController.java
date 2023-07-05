@@ -4,9 +4,8 @@ import com.example.calendar.util.DataBaseUtil;
 import com.example.calendar.util.LocalDateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -15,6 +14,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
@@ -121,29 +121,28 @@ public class CalendarController {
     }
 
     private void handleDayClick(Matrix cell) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("daily-view.fxml"));
-            DialogPane view = loader.load();
+            AnchorPane view = loader.load();
             DailyViewController controller = loader.getController();
 
             controller.setIntestation(cell);
 
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle("Daily View");
-            dialog.initModality(Modality.WINDOW_MODAL);
-            dialog.setDialogPane(view);
-            // Show the dialog and wait until the user closes it
-            Optional<ButtonType> clickedButton = dialog.showAndWait();
+            Stage stage = new Stage();
+            stage.setTitle("Daily View");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(new Scene(view));
 
-            if (clickedButton.equals(ButtonType.CLOSE)) {
-                dialog.close();
-            }
+            // Show the stage and wait until the user closes it
+            stage.showAndWait();
+            DailyViewController.update(cell.getDate());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     void createTable() throws SQLException {
         String query = "CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDate DATE, StartTime TIME, EndDate DATE, EndTime TIME, Description TEXT)";
