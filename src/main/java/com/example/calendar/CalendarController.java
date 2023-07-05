@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -19,9 +18,7 @@ import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.sql.*;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 
 public class CalendarController {
@@ -36,13 +33,13 @@ public class CalendarController {
 
     private LocalDate currentDate;
 
-
     final int NUM_CELLS_TOT = 42;
 
-    public void initialize() {
+    public void initialize() throws SQLException {
         connection = DataBaseUtil.getConnection();
         currentDate = LocalDate.now();
         updateCalendar();
+        createTable();
     }
 
     @FXML
@@ -59,7 +56,7 @@ public class CalendarController {
 
     @FXML
     private void handleAddButton() {
-        DatabaseController.openDialogPane(new Matrix(LocalDate.now()));
+        DailyViewController.openDialogPane(new Matrix(LocalDate.now()));
     }
 
     private void setSingleBox(Matrix cell, Text text, Color color) {
@@ -99,20 +96,20 @@ public class CalendarController {
                 Matrix cell = new Matrix(row, col);
 
                 if (cell.getIndex() < LocalDateUtil.getStartOffset(currentDate)) {
-
+                    /*previous month*/
                     cell.setDate(currentDate.minusMonths(1).withDayOfMonth(day_previousMonth++));
 
                     Text text = new Text(String.valueOf(cell.getDate().getDayOfMonth()));
 
                     setSingleBox(cell, text, Color.web("#95A5A6"));
                 } else if (day <= currentDate.lengthOfMonth()) {
-
+                    /* current month*/
                     cell.setDate(currentDate.withDayOfMonth(day++));
 
                     Text text = new Text(String.valueOf(cell.getDate().getDayOfMonth()));
                     setSingleBox(cell, text, Color.web("#34495E"));
                 } else if (day++ <= NUM_CELLS_TOT) {
-
+                    /*next month*/
                     cell.setDate(currentDate.plusMonths(1).withDayOfMonth(day_FollowingMonth++));
 
                     Text text = new Text(String.valueOf(cell.getDate().getDayOfMonth()));
@@ -128,7 +125,7 @@ public class CalendarController {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("daily-view.fxml"));
             DialogPane view = loader.load();
-            DatabaseController controller = loader.getController();
+            DailyViewController controller = loader.getController();
 
             controller.setIntestation(cell);
 
@@ -140,28 +137,20 @@ public class CalendarController {
             Optional<ButtonType> clickedButton = dialog.showAndWait();
 
             if (clickedButton.equals(ButtonType.CLOSE)) {
-                System.out.println("data: " + cell.getDate());
                 dialog.close();
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void insertData(Event event) {
-        String query = "INSERT INTO event (Title, StartDate, StartTime, EndDate, EndTime, Description) VALUES (?,?,?,?,?,?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, event.getTitle());
-            preparedStatement.setDate(2, java.sql.Date.valueOf(event.getStartDate()));
-            preparedStatement.setTime(3, Time.valueOf(event.getStartTime()));
-            preparedStatement.setDate(4, Date.valueOf(event.getEndDate()));
-            preparedStatement.setTime(5, Time.valueOf(event.getEndTime()));
-            preparedStatement.setString(6, event.getDescription());
-            preparedStatement.executeUpdate(); // Execute the update query
-        } catch (SQLException e) {
-            e.printStackTrace();
+    void createTable() throws SQLException {
+        String query = "CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDate DATE, StartTime TIME, EndDate DATE, EndTime TIME, Description TEXT)";
+        try (Statement statement = connection.createStatement()) {
+            statement.execute(query);
         }
     }
+
+
 }

@@ -75,6 +75,7 @@ public class AddEventDialogController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public Event getEvent() {
