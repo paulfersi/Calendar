@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.*;
 
 public class CalendarController {
 
@@ -131,7 +130,7 @@ public class CalendarController {
 
             Stage stage = new Stage();
             stage.setTitle("Daily View");
-            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(view));
 
             // Show the stage and wait until the user closes it

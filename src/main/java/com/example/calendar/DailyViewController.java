@@ -3,9 +3,12 @@ package com.example.calendar;
 import com.example.calendar.util.DataBaseUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
@@ -46,33 +49,37 @@ public class DailyViewController {
     }
 
 
-    public static void openDialogPane(Matrix cell){
+    public static void openDialogPane(Matrix cell) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(DailyViewController.class.getResource("add-event-view.fxml"));
-            DialogPane view = loader.load();
+            AnchorPane view = loader.load();
             AddEventDialogController controller = loader.getController();
 
             controller.setIntestation(cell);
 
             // Create the dialog
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle("New Event");
-            dialog.initModality(Modality.WINDOW_MODAL);
-            dialog.setDialogPane(view);
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("New Event");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
 
-            // Show the dialog and wait until the user closes it
-            Optional<ButtonType> clickedButton = dialog.showAndWait();
-            if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.APPLY) {
-                controller.update();
-                Event event = controller.getEvent();
-                insertData(event);
-                refreshTable(tableView,cell.getDate());
-            }
+            // Set the content of the stage to the loaded AnchorPane
+            Scene scene = new Scene(view);
+            dialogStage.setScene(scene);
+
+            // Show the stage and wait until the user closes it
+            dialogStage.showAndWait();
+
+            // Process the result when the stage is closed
+            controller.update();
+            Event event = controller.getEvent();
+            insertData(event);
+            refreshTable(tableView, cell.getDate());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private static void insertData(Event event) {
         String query = "INSERT INTO event (Title, StartDate, StartTime, EndDate, EndTime, Description) VALUES (?,?,?,?,?,?)";
