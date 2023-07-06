@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="300.0" prefWidth="350.0" style="-fx-background-color: #24293E;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.calendar.AddEventDialogController">
    <children>
       <GridPane layoutX="3.0" layoutY="14.0">
@@ -115,7 +114,7 @@
          </children>
       </GridPane>
       <TextArea fx:id="descriptionField" layoutX="14.0" layoutY="169.0" prefHeight="70.0" prefWidth="330.0" promptText="Description" />
-      <Button layoutX="279.0" layoutY="255.0" mnemonicParsing="false" prefWidth="60.0" text="Apply" />
-      <Button layoutX="211.0" layoutY="255.0" mnemonicParsing="false" prefWidth="60.0" text="Cancel" />
+      <Button fx:id="applyButton" layoutX="279.0" layoutY="255.0" mnemonicParsing="false" onAction="#handleApplyButton" prefWidth="60.0" text="Apply" />
+      <Button fx:id="cancelButton" layoutX="211.0" layoutY="255.0" mnemonicParsing="false" prefWidth="60.0" text="Cancel" />
    </children>
 </AnchorPane>

@@ -15,7 +15,6 @@ import java.sql.*;
 import java.time.LocalDate;
 
 import java.time.LocalTime;
-import java.util.Optional;
 
 public class DailyViewController {
 
@@ -24,7 +23,7 @@ public class DailyViewController {
     static Connection connection = DataBaseUtil.getConnection();
 
     @FXML
-    private static TableView<Event> tableView;
+    public static TableView<Event> tableView;
 
     @FXML
     private TableColumn<Event,String> timeColumn;
@@ -33,6 +32,8 @@ public class DailyViewController {
     private static TableColumn<Event,String> titleColumn;
     @FXML
     private Label headerLabel;
+
+
 
     public static void update(LocalDate selectedDate) {
         refreshTable(tableView,selectedDate);
@@ -70,10 +71,7 @@ public class DailyViewController {
             // Show the stage and wait until the user closes it
             dialogStage.showAndWait();
 
-            // Process the result when the stage is closed
-            controller.update();
-            Event event = controller.getEvent();
-            insertData(event);
+
             refreshTable(tableView, cell.getDate());
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,21 +79,6 @@ public class DailyViewController {
     }
 
 
-    private static void insertData(Event event) {
-        String query = "INSERT INTO event (Title, StartDate, StartTime, EndDate, EndTime, Description) VALUES (?,?,?,?,?,?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, event.getTitle());
-            preparedStatement.setDate(2, java.sql.Date.valueOf(event.getStartDate()));
-            preparedStatement.setTime(3, Time.valueOf(event.getStartTime()));
-            preparedStatement.setDate(4, Date.valueOf(event.getEndDate()));
-            preparedStatement.setTime(5, Time.valueOf(event.getEndTime()));
-            preparedStatement.setString(6, event.getDescription());
-            preparedStatement.executeUpdate(); // Execute the update query
-            System.out.println(event.toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void refreshTable(TableView<Event> tableView,LocalDate selectedDate){
         String query = "SELECT id, Title, StartDate, StartTime, EndDate, EndTime, Description FROM event " +
@@ -107,7 +90,7 @@ public class DailyViewController {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                // Recupera i dati dal resultSet della query
+                // Recupera i dati dal resultSet della query -> li recupero tutti perché ci servono per l'alert dopo
                 int id = resultSet.getInt("id");
                 String title = resultSet.getString("Title");
                 LocalDate startDate = resultSet.getDate("StartDate").toLocalDate();

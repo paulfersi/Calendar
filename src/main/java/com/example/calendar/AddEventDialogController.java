@@ -1,9 +1,16 @@
 package com.example.calendar;
 
+import com.example.calendar.util.DataBaseUtil;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
+
+import static com.example.calendar.DailyViewController.refreshTable;
+import static com.example.calendar.DailyViewController.tableView;
 
 public class AddEventDialogController {
 
@@ -27,8 +34,13 @@ public class AddEventDialogController {
     private DatePicker startDatePicker;
     @FXML
     private TextField titleField;
+    @FXML
+    private Button applyButton;
+    @FXML
+    private Button cancelButton;
+    Connection connection = DataBaseUtil.getConnection();
 
-    Event event;
+
 
     void setIntestation(Matrix cell) {
         dayLabel.setText(cell.getDate().getDayOfWeek().toString());
@@ -38,17 +50,33 @@ public class AddEventDialogController {
     }
 
 
-    void update() {
-        event.setTitle(titleField.getText());
-        event.setStartDate(startDatePicker.getValue());
-        event.setEndDate(endDatePicker.getValue());
-        int sHours = -1;
-        int sMinutes = -1;
-        int eHours = -1;
-        int eMinutes = -1;
-        LocalTime startTime = LocalTime.MAX;
-        LocalTime endTime = LocalTime.MAX;
-        /*start time*/
+
+    private void insertData(String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String description) {
+        String query = "INSERT INTO event (Title, StartDate, StartTime, EndDate, EndTime, Description) VALUES (?,?,?,?,?,?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, title);
+            preparedStatement.setDate(2, Date.valueOf(startDate));
+            preparedStatement.setTime(3, Time.valueOf(startTime));
+            preparedStatement.setDate(4, Date.valueOf(endDate));
+            preparedStatement.setTime(5, Time.valueOf(endTime));
+            preparedStatement.setString(6, description);
+            preparedStatement.executeUpdate(); // Execute the update query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleApplyButton(){
+        String title = titleField.getText();
+        LocalDate startDate = startDatePicker.getValue();
+        //per l'orario inserisco i due field "hours" e "minutes" in un LocalTime
+        int sHours;
+        int sMinutes;
+        int eHours;
+        int eMinutes;
+        LocalTime startTime = null;
+        LocalTime endTime = null;
         try {
             sHours = Integer.parseInt(hourStartField.getText());
             sMinutes = Integer.parseInt(minuteStartField.getText());
@@ -56,9 +84,8 @@ public class AddEventDialogController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        event.setStartTime(startTime);
+        LocalDate endDate = endDatePicker.getValue();
 
-        /*end time*/
         try {
             eHours = Integer.parseInt(hourEndField.getText());
             eMinutes = Integer.parseInt(minuteEndField.getText());
@@ -66,10 +93,9 @@ public class AddEventDialogController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        event.setEndTime(endTime);
 
-        event.setDescription(descriptionField.getText());
-
+        String description = descriptionField.getText();
+        Event event = new Event(title,startDate,startTime,endDate,endTime,description);
 
         try {
             Event.checkEvent(event);
@@ -77,9 +103,20 @@ public class AddEventDialogController {
             e.printStackTrace();
         }
 
+        insertData(title, startDate, startTime, endDate, endTime, description);
+        /*DEBUG*/
+        System.out.println(title + " , " + startDate + " , " + startTime + " , " + endDate + " , " + endTime + " , " + description);
+
+
+        titleField.clear();
+        startDatePicker.setValue(null);
+        hourStartField.clear();
+        minuteStartField.clear();
+        endDatePicker.setValue(null);
+        hourEndField.clear();
+        minuteEndField.clear();
+        descriptionField.clear();
+
     }
 
-    public Event getEvent() {
-        return event;
-    }
 }
