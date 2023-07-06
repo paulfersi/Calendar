@@ -23,6 +23,10 @@ public class Event {
         this.description = description;
     }
 
+    public Event(String title) {
+        this.title = title;
+    }
+
     public Event(String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String description) {
         this.title = title;
         this.startDate = startDate;

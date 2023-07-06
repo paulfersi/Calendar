@@ -19,7 +19,7 @@ import java.time.LocalTime;
 public class DailyViewController {
 
 
-    private LocalDate selectedDate;
+    private static LocalDate selectedDate;
     static Connection connection = DataBaseUtil.getConnection();
 
     @FXML
@@ -32,12 +32,10 @@ public class DailyViewController {
     private static TableColumn<Event,String> titleColumn;
     @FXML
     private Label headerLabel;
+    @FXML
+    private Button refreshButton;
 
 
-
-    public static void update(LocalDate selectedDate) {
-        refreshTable(tableView,selectedDate);
-    }
 
     void setIntestation(Matrix cell) {
         selectedDate = cell.getDate();
@@ -47,6 +45,15 @@ public class DailyViewController {
     @FXML
     void handleAddButton(){
         openDialogPane(new Matrix(selectedDate));
+    }
+
+    public static void update(){
+        showTable(tableView);
+    }
+
+    @FXML
+    void handleRefreshButton(){
+        showTable(tableView);
     }
 
 
@@ -72,15 +79,37 @@ public class DailyViewController {
             dialogStage.showAndWait();
 
 
-            refreshTable(tableView, cell.getDate());
+            showTable(tableView);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
+    private static void showTable(TableView<Event> tableView){
+        String query = "SELECT id, Title, StartDate, StartTime, EndDate, EndTime, Description FROM event " +
+                "WHERE (StartDate <= ? AND EndDate >= ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setDate(1, Date.valueOf(selectedDate));
+            statement.setDate(2,Date.valueOf(selectedDate));
 
-    public static void refreshTable(TableView<Event> tableView,LocalDate selectedDate){
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()){
+                String title = resultSet.getString("Title");
+                Event event = new Event(title);
+
+                titleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
+                tableView.getItems().add(event);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    public void refreshTable(TableView<Event> tableView, LocalDate selectedDate){
         String query = "SELECT id, Title, StartDate, StartTime, EndDate, EndTime, Description FROM event " +
                 "WHERE (StartDate <= ? AND EndDate >= ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {

@@ -135,7 +135,7 @@ public class CalendarController {
 
             // Show the stage and wait until the user closes it
             stage.showAndWait();
-            DailyViewController.update(cell.getDate());
+            DailyViewController.update();
 
         } catch (IOException e) {
             e.printStackTrace();

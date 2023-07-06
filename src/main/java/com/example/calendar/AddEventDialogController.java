@@ -9,8 +9,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import static com.example.calendar.DailyViewController.refreshTable;
-import static com.example.calendar.DailyViewController.tableView;
+
 
 public class AddEventDialogController {
 
