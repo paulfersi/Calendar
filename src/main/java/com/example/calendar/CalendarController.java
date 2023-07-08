@@ -5,6 +5,8 @@ import com.example.calendar.util.LocalDateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -55,7 +57,7 @@ public class CalendarController {
 
     @FXML
     private void handleAddButton() {
-        DailyViewController.openDialogPane(new Matrix(LocalDate.now()));
+        openDialogPane(new Matrix(LocalDate.now()));
     }
 
     private void setSingleBox(Matrix cell, Text text, Color color) {
@@ -120,25 +122,44 @@ public class CalendarController {
     }
 
     private void handleDayClick(Matrix cell) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("daily-view.fxml"));
-            AnchorPane view = loader.load();
-            DailyViewController controller = loader.getController();
+        LocalDate selectedDate = cell.getDate();
+        if (selectedDate != null) {
+            TableView<Event> eventTableView = new TableView<>();
+            TableColumn<Event, String> titleColumn = new TableColumn<>("Title");
+            eventTableView.getColumns().add(titleColumn);
 
-            controller.setIntestation(cell);
+            String query = "SELECT Title FROM event WHERE StartDate = ? ";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setDate(1, Date.valueOf(selectedDate));
+                ResultSet resultSet = preparedStatement.executeQuery();
 
-            Stage stage = new Stage();
-            stage.setTitle("Daily View");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(view));
+                while (resultSet.next()) {
+                    String title = resultSet.getString("Title");
+                    System.out.println("Title for selected date: " + title);
+                    Event event = new Event(title);
+                    titleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
+                    eventTableView.getItems().add(event);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-            // Show the stage and wait until the user closes it
-            stage.showAndWait();
-            DailyViewController.update();
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Events for " + selectedDate);
+            dialog.getDialogPane().setContent(eventTableView);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType addEventButton = new ButtonType("Add Event", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(closeButton, addEventButton);
+
+            dialog.setResultConverter(buttonType -> {
+                if (buttonType == addEventButton) {
+                    openDialogPane(cell);
+                }
+                return null;
+            });
+
+            dialog.showAndWait();
         }
     }
 
@@ -147,6 +168,32 @@ public class CalendarController {
         String query = "CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDate DATE, StartTime TIME, EndDate DATE, EndTime TIME, Description TEXT)";
         try (Statement statement = connection.createStatement()) {
             statement.execute(query);
+        }
+    }
+    private void openDialogPane(Matrix cell) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(CalendarController.class.getResource("add-event-view.fxml"));
+            AnchorPane view = loader.load();
+            AddEventDialogController controller = loader.getController();
+
+            controller.setIntestation(cell);
+
+            // Create the dialog
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("New Event");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+
+            // Set the content of the stage to the loaded AnchorPane
+            Scene scene = new Scene(view);
+            dialogStage.setScene(scene);
+
+            // Show the stage and wait until the user closes it
+            dialogStage.showAndWait();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
