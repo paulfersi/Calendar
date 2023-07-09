@@ -148,9 +148,25 @@ public class CalendarController {
             dialog.setTitle("Events for " + selectedDate);
             dialog.getDialogPane().setContent(eventTableView);
 
+
+            dialog.getDialogPane().setStyle("-fx-background-color: #24293E; -fx-border-color: #8EBBFF; -fx-border-width: 2;");
+
+            eventTableView.setStyle("-fx-background-color: #34495E; -fx-border-color: #8EBBFF;");
+
+            eventTableView.setStyle("-fx-text-fill: white;");
+
             ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
             ButtonType addEventButton = new ButtonType("Add Event", ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(closeButton, addEventButton);
+
+
+            Button closeButtonNode = (Button) dialog.getDialogPane().lookupButton(closeButton);
+            Button addEventButtonNode = (Button) dialog.getDialogPane().lookupButton(addEventButton);
+            closeButtonNode.setStyle("-fx-text-fill: black;");
+            addEventButtonNode.setStyle("-fx-text-fill: black;");
+
+            closeButtonNode.setStyle("-fx-background-color: #8EBBFF; -fx-text-fill: black;");
+            addEventButtonNode.setStyle("-fx-background-color: #8EBBFF; -fx-text-fill: black;");
 
             dialog.setResultConverter(buttonType -> {
                 if (buttonType == addEventButton) {
@@ -179,16 +195,15 @@ public class CalendarController {
 
             controller.setIntestation(cell);
 
-            // Create the dialog
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("New Event");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
 
-            // Set the content of the stage to the loaded AnchorPane
+
             Scene scene = new Scene(view);
             dialogStage.setScene(scene);
 
-            // Show the stage and wait until the user closes it
             dialogStage.showAndWait();
 
 

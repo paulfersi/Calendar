@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,39 +13,13 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="300.0" prefWidth="350.0" style="-fx-background-color: #24293E;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.calendar.AddEventDialogController">
+<AnchorPane prefHeight="300.0" prefWidth="350.0" style="-fx-background-color: #24293E; -fx-border-color: #8EBBFF; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.calendar.AddEventDialogController">
    <children>
-      <GridPane layoutX="3.0" layoutY="14.0">
+      <TextField fx:id="titleField" layoutX="14.0" layoutY="64.0" promptText="Title" style="-fx-background-color: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:2;-fx-border-radius:5;" AnchorPane.leftAnchor="15.0" />
+      <GridPane layoutX="14.0" layoutY="99.0" AnchorPane.leftAnchor="15.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="225.0" minWidth="10.0" prefWidth="78.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="225.0" minWidth="10.0" prefWidth="18.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="329.0" minWidth="10.0" prefWidth="224.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-         <padding>
-            <Insets left="20.0" right="10.0" top="10.0" />
-         </padding>
-         <children>
-            <Label fx:id="dayLabel" text="Label" textFill="WHITE">
-               <font>
-                  <Font name="SF Pro Display Bold" size="15.0" />
-               </font>
-            </Label>
-            <Label fx:id="dateLabel" text="Label" textFill="WHITE" GridPane.columnIndex="2">
-               <font>
-                  <Font name="SF Pro Display Bold" size="15.0" />
-               </font>
-            </Label>
-            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-         </children>
-      </GridPane>
-      <TextField fx:id="titleField" layoutX="14.0" layoutY="64.0" promptText="Title" />
-      <GridPane layoutX="14.0" layoutY="99.0">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="10.0" prefWidth="70.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="260.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="10.0" prefWidth="76.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="254.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -57,20 +30,26 @@
                <padding>
                   <Insets left="5.0" />
                </padding>
+               <font>
+                  <Font name="SF Pro Display Bold" size="13.0" />
+               </font>
             </Label>
             <Label text="End Date" textFill="WHITE" GridPane.rowIndex="1">
                <padding>
                   <Insets left="5.0" />
                </padding>
+               <font>
+                  <Font name="SF Pro Display Bold" size="13.0" />
+               </font>
             </Label>
             <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
                <children>
-                  <DatePicker fx:id="startDatePicker" prefHeight="25.0" prefWidth="130.0">
+                  <DatePicker fx:id="startDatePicker" prefHeight="25.0" prefWidth="130.0" style="-fx-control-inner-background: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:1;-fx-border-radius:5;">
                      <HBox.margin>
                         <Insets right="15.0" top="5.0" />
                      </HBox.margin>
                   </DatePicker>
-                  <TextField fx:id="hourStartField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00">
+                  <TextField fx:id="hourStartField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00" style="-fx-background-color: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:1;-fx-border-radius:5;">
                      <HBox.margin>
                         <Insets right="5.0" top="5.0" />
                      </HBox.margin>
@@ -80,7 +59,7 @@
                         <Insets />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="minuteStartField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00">
+                  <TextField fx:id="minuteStartField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00" style="-fx-background-color: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:1;-fx-border-radius:5;">
                      <HBox.margin>
                         <Insets left="5.0" top="5.0" />
                      </HBox.margin>
@@ -89,12 +68,12 @@
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <DatePicker fx:id="endDatePicker" prefHeight="25.0" prefWidth="130.0">
+                  <DatePicker fx:id="endDatePicker" prefHeight="25.0" prefWidth="130.0" style="-fx-control-inner-background: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:1;-fx-border-radius:5;">
                      <HBox.margin>
                         <Insets right="15.0" top="5.0" />
                      </HBox.margin>
                   </DatePicker>
-                  <TextField fx:id="hourEndField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00">
+                  <TextField fx:id="hourEndField" alignment="CENTER" prefHeight="32.0" prefWidth="32.0" promptText="00" style="-fx-background-color: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:1;-fx-border-radius:5;">
                      <HBox.margin>
                         <Insets right="5.0" top="5.0" />
                      </HBox.margin>
@@ -104,7 +83,7 @@
                         <Insets />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="minuteEndField" alignment="CENTER" prefHeight="35.0" prefWidth="32.0" promptText="00">
+                  <TextField fx:id="minuteEndField" alignment="CENTER" prefHeight="35.0" prefWidth="32.0" promptText="00" style="-fx-background-color: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:1;-fx-border-radius:5;">
                      <HBox.margin>
                         <Insets left="5.0" top="5.0" />
                      </HBox.margin>
@@ -113,8 +92,26 @@
             </HBox>
          </children>
       </GridPane>
-      <TextArea fx:id="descriptionField" layoutX="14.0" layoutY="169.0" prefHeight="70.0" prefWidth="330.0" promptText="Description" />
-      <Button fx:id="applyButton" layoutX="279.0" layoutY="255.0" mnemonicParsing="false" onAction="#handleApplyButton" prefWidth="60.0" text="Apply" />
-      <Button fx:id="cancelButton" layoutX="211.0" layoutY="255.0" mnemonicParsing="false" prefWidth="60.0" text="Cancel" />
+      <TextArea fx:id="descriptionField" layoutX="14.0" layoutY="169.0" prefHeight="70.0" prefWidth="330.0" promptText="Description" style="-fx-control-inner-background: #34495E;-fx-background-color: #34495E;-fx-border-color: #8EBBFF; -fx-border-width:2;-fx-border-radius:5;" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <Button fx:id="applyButton" layoutX="275.0" layoutY="255.0" mnemonicParsing="false" onAction="#handleApplyButton" prefWidth="60.0" style="-fx-background-color: #8EBBFF; -fx-border-color: #8EBBFF; -fx-border-radius: 5; -fx-text-fill: black;" text="Apply">
+         <font>
+            <Font name="SF Pro Display Regular" size="13.0" />
+         </font>
+      </Button>
+      <Button fx:id="cancelButton" layoutX="206.0" layoutY="255.0" mnemonicParsing="false" prefWidth="60.0" style="-fx-background-color: #8EBBFF; -fx-border-color: #8EBBFF; -fx-border-radius: 5; -fx-text-fill: black;" text="Cancel">
+         <font>
+            <Font name="SF Pro Display Regular" size="13.0" />
+         </font>
+      </Button>
+      <Label fx:id="dayLabel" layoutX="15.0" layoutY="26.0" prefHeight="19.0" prefWidth="120.0" text="Label" textFill="WHITE" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="24.0">
+         <font>
+            <Font name="SF Pro Display Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="dateLabel" layoutX="286.0" layoutY="26.0" prefHeight="19.0" prefWidth="105.0" text="Label" textAlignment="RIGHT" textFill="WHITE" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="24.0">
+         <font>
+            <Font name="SF Pro Display Bold" size="15.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
