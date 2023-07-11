@@ -67,6 +67,7 @@ public class AddEventDialogController {
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
         boolean correct = true;
+        Event event = null;
         //per l'orario inserisco i due field "hours" e "minutes" in un LocalTime
         int sHours = -1;
         int sMinutes = -1;
@@ -74,6 +75,7 @@ public class AddEventDialogController {
         int eMinutes = -1;
         LocalTime startTime = null;
         LocalTime endTime = null;
+
         try {
             sHours = Integer.parseInt(hourStartField.getText());
         } catch (Exception e) {
@@ -83,94 +85,109 @@ public class AddEventDialogController {
             alert.setHeaderText("Incorrect Time Format");
             alert.setContentText("Start Hour is not valid!");
             alert.showAndWait();
-            clearFields();
+        }
+        if (correct) {
+            try {
+                sMinutes = Integer.parseInt(minuteStartField.getText());
+            } catch (Exception e) {
+                correct = false;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Incorrect Time Format");
+                alert.setContentText("Start Minute is not valid!");
+                alert.showAndWait();
+            }
+        }
+        if (correct) {
+            try {
+                startTime = LocalTime.of(sHours, sMinutes);
+            } catch (Exception e) {
+                correct = false;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Incorrect Time Format");
+                alert.setContentText("Start Time is out of range");
+                alert.showAndWait();
+            }
+        }
+        if (correct) {
+            try {
+                eHours = Integer.parseInt(hourEndField.getText());
+            } catch (Exception e) {
+                correct = false;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Incorrect Time Format");
+                alert.setContentText("End Hour is not valid!");
+                alert.showAndWait();
+            }
         }
 
-        try {
-            sMinutes = Integer.parseInt(minuteStartField.getText());
-        } catch (Exception e) {
-            correct = false;
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Incorrect Time Format");
-            alert.setContentText("Start Minute is not valid!");
-            alert.showAndWait();
-            clearFields();
+        if (correct) {
+            try {
+                eMinutes = Integer.parseInt(minuteEndField.getText());
+            } catch (Exception e) {
+                correct = false;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Incorrect Time Format");
+                alert.setContentText("End Minute is not valid!");
+                alert.showAndWait();
+            }
         }
 
-        startTime = LocalTime.of(sHours, sMinutes);
-
-        try {
-            eHours = Integer.parseInt(hourEndField.getText());
-        } catch (Exception e) {
-            correct = false;
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Incorrect Time Format");
-            alert.setContentText("End Hour is not valid!");
-            alert.showAndWait();
-            hourStartField.clear();
-            minuteStartField.clear();
-            hourEndField.clear();
-            minuteEndField.clear();
+        if (correct) {
+            try {
+                endTime = LocalTime.of(eHours, eMinutes);
+            } catch (Exception e) {
+                correct = false;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Incorrect Time Format");
+                alert.setContentText("End Time is out of range");
+                alert.showAndWait();
+            }
         }
-
-        try {
-            eMinutes = Integer.parseInt(minuteEndField.getText());
-        } catch (Exception e) {
-            correct = false;
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Incorrect Time Format");
-            alert.setContentText("End Minute is not valid!");
-            alert.showAndWait();
-            hourStartField.clear();
-            minuteStartField.clear();
-            hourEndField.clear();
-            minuteEndField.clear();
-        }
-
-        endTime = LocalTime.of(eHours, eMinutes);
 
         String description = descriptionField.getText();
-        Event event = new Event(title, startDate, startTime, endDate, endTime, description);
 
-        try {
-            if (event.startDate.isAfter(event.endDate)) {
-                throw new IllegalArgumentException();
+        if (correct) {
+            event = new Event(title, startDate, startTime, endDate, endTime, description);
+
+            try {
+                if (event.startDate.isAfter(event.endDate)) {
+                    throw new IllegalArgumentException();
+                }
+            } catch (IllegalArgumentException e) {
+                correct = false;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Incorrect Date/Time combination");
+                alert.setContentText("Start Date is after End Date");
+                alert.showAndWait();
             }
-        } catch (IllegalArgumentException e) {
-            correct = false;
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Incorrect Date/Time combination");
-            alert.setContentText("Start Date is after End Date");
-            alert.showAndWait();
-            startDatePicker.setValue(null);
-            endDatePicker.setValue(null);
         }
+        if(correct){
 
-        try {
-            if (event.startTime.isAfter(event.endTime) && event.getStartDate().isEqual(event.getEndDate())) {
-                /**verifico che non sia il caso in cui endDate sia un giorno diverso da startDate, solo in tal caso sarebbe accettabile che startTime sia dopo endTime **/
-                throw new IllegalArgumentException();
+            try {
+                if (event.startTime.isAfter(event.endTime) && event.getStartDate().isEqual(event.getEndDate())) {
+                    /**verifico che non sia il caso in cui endDate sia un giorno diverso da startDate, solo in tal caso sarebbe accettabile che startTime sia dopo endTime **/
+                    throw new IllegalArgumentException();
+                }
+            } catch (IllegalArgumentException e) {
+                correct = false;
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("ERROR");
+                alert.setHeaderText("Incorrect Date/Time combination");
+                alert.setContentText("Start Time is after End Time");
+                alert.showAndWait();
             }
-        } catch (IllegalArgumentException e) {
-            correct = false;
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText("Incorrect Date/Time combination");
-            alert.setContentText("Start Time is after End Time");
-            alert.showAndWait();
-            startDatePicker.setValue(null);
-            endDatePicker.setValue(null);
         }
 
         if (correct) {
             insertData(title, startDate, startTime, endDate, endTime, description);
-            clearFields();
-
         }
+        clearFields();
         CalendarController.getDialogStage().close();
     }
 
