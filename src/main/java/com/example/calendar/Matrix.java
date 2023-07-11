@@ -47,10 +47,6 @@ public class Matrix {
         return col;
     }
 
-    public void setCol(int col) {
-        this.col = col;
-    }
-
     public LocalDate getDate() {
         return Date;
     }

@@ -164,7 +164,7 @@ public class CalendarController {
                     openDialogPane(cell);
                     refreshTable(cell);
                 } else if (buttonType == removeButton) {
-                    removeEventDialog(cell);
+                    removeEvent(cell);
                 }
                 return null;
             });
@@ -208,7 +208,7 @@ public class CalendarController {
         }
     }
 
-    private void removeEventDialog(Matrix cell) {
+    private void removeEvent(Matrix cell) {
         TableView<Event> eventTableView = cell.getEventTableView();
 
         Event selectedEvent = eventTableView.getSelectionModel().getSelectedItem();
