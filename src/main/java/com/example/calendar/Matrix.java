@@ -22,7 +22,6 @@ public class Matrix {
     public Matrix(int row, int col) {
         this.row = row;
         this.col = col;
-
     }
 
     public Matrix(int row, int col, LocalDate date) {
@@ -103,8 +102,9 @@ public class Matrix {
         eventTableView.getColumns().add(endTimeColumn);
         eventTableView.getColumns().add(descriptionColumn);
     }
+
     public int getIndex() {
-        int ADJUSTMENT = 1;             //costante che fa si che si parta dalla cella d'indice 1, più utile per
+        int ADJUSTMENT = 1;        //costante che fa si che si parta dalla cella d'indice 1, più utile per
         //lavorare con le date (non esistendo il giorno 0)
         return row * NUM_COLS + col + ADJUSTMENT;
     }

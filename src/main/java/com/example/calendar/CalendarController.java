@@ -75,7 +75,7 @@ public class CalendarController {
         text.setFill(Color.WHITE);
         text.setFont(font);
 
-        //creo un rettangolo per poter modificare il bordo della zona di testo
+
         Rectangle border = new Rectangle(75, 75);
         border.setArcWidth(10);
         border.setArcHeight(10);
@@ -83,7 +83,7 @@ public class CalendarController {
         border.setStrokeWidth(2);
         border.setFill(color);
 
-        //aggiungo il rettangolo che fa da bordo e l'elemento di testo che corrisponde al giorno
+
         calendarGrid.add(border, cell.getCol(), cell.getRow());
         calendarGrid.add(text, cell.getCol(), cell.getRow());
     }
@@ -169,10 +169,8 @@ public class CalendarController {
                 return null;
             });
 
-            // Gestione dell'evento di chiusura della finestra
-            dialog.setOnCloseRequest(event -> dialog.close());
 
-            // Aggiungi un listener per gestire l'evento di chiusura della finestra principale
+            dialog.setOnCloseRequest(event -> dialog.close());
             Stage primaryStage = (Stage) eventTableView.getScene().getWindow();
             primaryStage.setOnCloseRequest(event -> dialog.close());
 
@@ -255,7 +253,7 @@ public class CalendarController {
                 LocalTime endTime = resultSet.getTime("EndTime").toLocalTime();
                 String description = resultSet.getString("Description");
 
-                //System.out.println("Title for selected date: " + title);
+
                 Event event = new Event(id, title, startDate, startTime, endDate, endTime, description);
                 titleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
                 startDateColumn.setCellValueFactory(new PropertyValueFactory<>("StartDate"));

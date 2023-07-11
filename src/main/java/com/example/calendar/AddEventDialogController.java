@@ -207,4 +207,6 @@ public class AddEventDialogController {
     void handleCancelButton(ActionEvent event) {
         CalendarController.getDialogStage().close();
     }
+
+
 }
