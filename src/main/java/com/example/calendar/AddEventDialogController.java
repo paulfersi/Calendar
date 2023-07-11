@@ -167,6 +167,7 @@ public class AddEventDialogController {
                 alert.showAndWait();
             }
         }
+
         if(correct){
 
             try {
