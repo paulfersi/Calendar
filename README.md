@@ -23,7 +23,7 @@ To use this application, follow these steps:
 
 ### Licence
 
-This project is licensed under the MIT License.
+This code is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as you see fit.
 
 
 
