@@ -98,7 +98,7 @@
             <Font name="SF Pro Display Regular" size="13.0" />
          </font>
       </Button>
-      <Button fx:id="cancelButton" layoutX="206.0" layoutY="255.0" mnemonicParsing="false" prefWidth="60.0" style="-fx-background-color: #8EBBFF; -fx-border-color: #8EBBFF; -fx-border-radius: 5; -fx-text-fill: black;" text="Cancel">
+      <Button fx:id="cancelButton" layoutX="206.0" layoutY="255.0" mnemonicParsing="false" onAction="#handleCancelButton" prefWidth="60.0" style="-fx-background-color: #8EBBFF; -fx-border-color: #8EBBFF; -fx-border-radius: 5; -fx-text-fill: black;" text="Cancel">
          <font>
             <Font name="SF Pro Display Regular" size="13.0" />
          </font>

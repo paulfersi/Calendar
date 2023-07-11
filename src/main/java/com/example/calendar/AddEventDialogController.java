@@ -4,12 +4,11 @@ import com.example.calendar.util.DataBaseUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-
 
 public class AddEventDialogController {
 
@@ -37,9 +36,8 @@ public class AddEventDialogController {
     private Button applyButton;
     @FXML
     private Button cancelButton;
+
     Connection connection = DataBaseUtil.getConnection();
-
-
 
     void setIntestation(Matrix cell) {
         dayLabel.setText(cell.getDate().getDayOfWeek().toString());
@@ -47,8 +45,6 @@ public class AddEventDialogController {
         startDatePicker.setValue(cell.getDate());
         endDatePicker.setValue(cell.getDate());
     }
-
-
 
     private void insertData(String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String description) {
         String query = "INSERT INTO event (Title, StartDate, StartTime, EndDate, EndTime, Description) VALUES (?,?,?,?,?,?)";
@@ -66,47 +62,119 @@ public class AddEventDialogController {
     }
 
     @FXML
-    private void handleApplyButton(){
+    private void handleApplyButton() {
         String title = titleField.getText();
         LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
+        boolean correct = true;
         //per l'orario inserisco i due field "hours" e "minutes" in un LocalTime
-        int sHours;
-        int sMinutes;
-        int eHours;
-        int eMinutes;
+        int sHours = -1;
+        int sMinutes = -1;
+        int eHours = -1;
+        int eMinutes = -1;
         LocalTime startTime = null;
         LocalTime endTime = null;
         try {
             sHours = Integer.parseInt(hourStartField.getText());
-            sMinutes = Integer.parseInt(minuteStartField.getText());
-            startTime = LocalTime.of(sHours, sMinutes);
         } catch (Exception e) {
-            e.printStackTrace();
+            correct = false;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Incorrect Time Format");
+            alert.setContentText("Start Hour is not valid!");
+            alert.showAndWait();
+            clearFields();
         }
-        LocalDate endDate = endDatePicker.getValue();
+
+        try {
+            sMinutes = Integer.parseInt(minuteStartField.getText());
+        } catch (Exception e) {
+            correct = false;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Incorrect Time Format");
+            alert.setContentText("Start Minute is not valid!");
+            alert.showAndWait();
+            clearFields();
+        }
+
+        startTime = LocalTime.of(sHours, sMinutes);
 
         try {
             eHours = Integer.parseInt(hourEndField.getText());
-            eMinutes = Integer.parseInt(minuteEndField.getText());
-            endTime = LocalTime.of(eHours, eMinutes);
         } catch (Exception e) {
-            e.printStackTrace();
+            correct = false;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Incorrect Time Format");
+            alert.setContentText("End Hour is not valid!");
+            alert.showAndWait();
+            hourStartField.clear();
+            minuteStartField.clear();
+            hourEndField.clear();
+            minuteEndField.clear();
         }
-
-        String description = descriptionField.getText();
-        Event event = new Event(title,startDate,startTime,endDate,endTime,description);
 
         try {
-            Event.checkEvent(event);
+            eMinutes = Integer.parseInt(minuteEndField.getText());
         } catch (Exception e) {
-            e.printStackTrace();
+            correct = false;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Incorrect Time Format");
+            alert.setContentText("End Minute is not valid!");
+            alert.showAndWait();
+            hourStartField.clear();
+            minuteStartField.clear();
+            hourEndField.clear();
+            minuteEndField.clear();
         }
 
-        insertData(title, startDate, startTime, endDate, endTime, description);
-        /*DEBUG*/
-        System.out.println(title + " , " + startDate + " , " + startTime + " , " + endDate + " , " + endTime + " , " + description);
+        endTime = LocalTime.of(eHours, eMinutes);
 
+        String description = descriptionField.getText();
+        Event event = new Event(title, startDate, startTime, endDate, endTime, description);
 
+        try {
+            if (event.startDate.isAfter(event.endDate)) {
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e) {
+            correct = false;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Incorrect Date/Time combination");
+            alert.setContentText("Start Date is after End Date");
+            alert.showAndWait();
+            startDatePicker.setValue(null);
+            endDatePicker.setValue(null);
+        }
+
+        try {
+            if (event.startTime.isAfter(event.endTime) && event.getStartDate().isEqual(event.getEndDate())) {
+                /**verifico che non sia il caso in cui endDate sia un giorno diverso da startDate, solo in tal caso sarebbe accettabile che startTime sia dopo endTime **/
+                throw new IllegalArgumentException();
+            }
+        } catch (IllegalArgumentException e) {
+            correct = false;
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText("Incorrect Date/Time combination");
+            alert.setContentText("Start Time is after End Time");
+            alert.showAndWait();
+            startDatePicker.setValue(null);
+            endDatePicker.setValue(null);
+        }
+
+        if (correct) {
+            insertData(title, startDate, startTime, endDate, endTime, description);
+            clearFields();
+
+        }
+        CalendarController.getDialogStage().close();
+    }
+
+    private void clearFields() {
         titleField.clear();
         startDatePicker.setValue(null);
         hourStartField.clear();
@@ -115,7 +183,10 @@ public class AddEventDialogController {
         hourEndField.clear();
         minuteEndField.clear();
         descriptionField.clear();
-
     }
 
+    @FXML
+    void handleCancelButton(ActionEvent event) {
+        CalendarController.getDialogStage().close();
+    }
 }

@@ -23,10 +23,6 @@ public class Event {
         this.description = description;
     }
 
-    public Event(String title) {
-        this.title = title;
-    }
-
     public Event(String title, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String description) {
         this.title = title;
         this.startDate = startDate;
@@ -93,13 +89,7 @@ public class Event {
     }
 
     public static void checkEvent(Event e) {
-        if (e.startDate.isAfter(e.endDate)) {
-            throw new IllegalArgumentException();
-        }
-        if (e.startTime.isAfter(e.endTime) && e.getStartDate().isEqual(e.getEndDate())) {
-            /**verifico che non sia il caso in cui endDate sia un giorno diverso da startDate, solo in tal caso sarebbe accettabile che startTime sia dopo endTime **/
-            throw new IllegalArgumentException();
-        }
+
     }
 }
 

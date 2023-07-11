@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Optional;
 
 public class CalendarController {
 
@@ -35,6 +37,8 @@ public class CalendarController {
     private LocalDate currentDate;
 
     final int NUM_CELLS_TOT = 42;
+
+    public static Stage dialogStage;
 
     public void initialize() throws SQLException {
         connection = DataBaseUtil.getConnection();
@@ -62,6 +66,8 @@ public class CalendarController {
 
     private void setSingleBox(Matrix cell, Text text, Color color) {
         Font font = Font.font("sfProFont", FontWeight.BOLD, 18);
+
+        cell.prepareTableView();        //NUOVO
 
         text.setWrappingWidth(75);
         text.setTextAlignment(TextAlignment.CENTER);
@@ -91,8 +97,8 @@ public class CalendarController {
         int day_FollowingMonth = 1;
         int day_previousMonth = LocalDateUtil.getDayPreviousMonth(currentDate);
 
-        for (int row = 0; row < Matrix.numRows; row++) {               //matrice
-            for (int col = 0; col < Matrix.numCols; col++) {
+        for (int row = 0; row < Matrix.NUM_ROWS; row++) {               //matrice
+            for (int col = 0; col < Matrix.NUM_COLS; col++) {
 
                 Matrix cell = new Matrix(row, col);
 
@@ -124,30 +130,14 @@ public class CalendarController {
     private void handleDayClick(Matrix cell) {
         LocalDate selectedDate = cell.getDate();
         if (selectedDate != null) {
-            TableView<Event> eventTableView = new TableView<>();
-            TableColumn<Event, String> titleColumn = new TableColumn<>("Title");
-            eventTableView.getColumns().add(titleColumn);
 
-            String query = "SELECT Title FROM event WHERE StartDate = ? ";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setDate(1, Date.valueOf(selectedDate));
-                ResultSet resultSet = preparedStatement.executeQuery();
+            refreshTable(cell);
 
-                while (resultSet.next()) {
-                    String title = resultSet.getString("Title");
-                    System.out.println("Title for selected date: " + title);
-                    Event event = new Event(title);
-                    titleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
-                    eventTableView.getItems().add(event);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            TableView<Event> eventTableView = cell.getEventTableView();
 
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle("Events for " + selectedDate);
             dialog.getDialogPane().setContent(eventTableView);
-
 
             dialog.getDialogPane().setStyle("-fx-background-color: #24293E; -fx-border-color: #8EBBFF; -fx-border-width: 2;");
 
@@ -155,18 +145,19 @@ public class CalendarController {
 
             eventTableView.setStyle("-fx-text-fill: white;");
 
-            ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType removeButton = new ButtonType("Remove", ButtonBar.ButtonData.CANCEL_CLOSE);
             ButtonType addEventButton = new ButtonType("Add Event", ButtonBar.ButtonData.OK_DONE);
-            dialog.getDialogPane().getButtonTypes().addAll(closeButton, addEventButton);
+            dialog.getDialogPane().getButtonTypes().addAll(addEventButton, removeButton);
 
-
-            Button closeButtonNode = (Button) dialog.getDialogPane().lookupButton(closeButton);
+            /*STYLE*/
+            Button closeButtonNode = (Button) dialog.getDialogPane().lookupButton(removeButton);
             Button addEventButtonNode = (Button) dialog.getDialogPane().lookupButton(addEventButton);
             closeButtonNode.setStyle("-fx-text-fill: black;");
             addEventButtonNode.setStyle("-fx-text-fill: black;");
 
             closeButtonNode.setStyle("-fx-background-color: #8EBBFF; -fx-text-fill: black;");
             addEventButtonNode.setStyle("-fx-background-color: #8EBBFF; -fx-text-fill: black;");
+            /*-----------------------------------*/
 
             dialog.setResultConverter(buttonType -> {
                 if (buttonType == addEventButton) {
@@ -174,11 +165,15 @@ public class CalendarController {
                 }
                 return null;
             });
-
+            /*dialog.setResultConverter(buttonType -> {
+                if (buttonType == removeButton) {
+                   removeEventDialog(cell);
+                }
+                return null;
+            });*/
             dialog.showAndWait();
         }
     }
-
 
     void createTable() throws SQLException {
         String query = "CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDate DATE, StartTime TIME, EndDate DATE, EndTime TIME, Description TEXT)";
@@ -186,6 +181,7 @@ public class CalendarController {
             statement.execute(query);
         }
     }
+
     private void openDialogPane(Matrix cell) {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -195,22 +191,92 @@ public class CalendarController {
 
             controller.setIntestation(cell);
 
-
-            Stage dialogStage = new Stage();
+            dialogStage = new Stage();
             dialogStage.setTitle("New Event");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
-
 
             Scene scene = new Scene(view);
             dialogStage.setScene(scene);
 
             dialogStage.showAndWait();
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private void removeEventDialog(Matrix cell) {
+        TableView<Event> eventTableView = cell.getEventTableView();
 
+        Event selectedEvent = eventTableView.getSelectionModel().getSelectedItem();
+        if (selectedEvent != null) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Remove Event");
+            alert.setContentText("Are you sure you want to remove this event?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                int eventId = selectedEvent.getId();
+                deleteEvent(eventId);
+            }
+        }
+       refreshTable(cell);
+    }
+
+    private void refreshTable(Matrix cell) {
+        TableView<Event> eventTableView = cell.getEventTableView();
+        TableColumn<Event, String> titleColumn = cell.getTitleColumn();
+        TableColumn<Event, String> startDateColumn = cell.getStartDateColumn();
+        TableColumn<Event, String> startTimeColumn = cell.getStartTimeColumn();
+        TableColumn<Event, String> endDateColumn = cell.getEndDateColumn();
+        TableColumn<Event, String> endTimeColumn = cell.getEndTimeColumn();
+        TableColumn<Event, String> descriptionColumn = cell.getDescriptionColumn();
+
+        eventTableView.getItems().clear();
+
+        LocalDate selectedDate = cell.getDate();
+        String query = "SELECT * FROM event WHERE StartDate = ? ";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setDate(1, Date.valueOf(selectedDate));
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String title = resultSet.getString("Title");
+                LocalDate startDate = resultSet.getDate("StartDate").toLocalDate();
+                LocalTime startTime = resultSet.getTime("StartTime").toLocalTime();
+                LocalDate endDate = resultSet.getDate("EndDate").toLocalDate();
+                LocalTime endTime = resultSet.getTime("EndTime").toLocalTime();
+                String description = resultSet.getString("Description");
+
+                //System.out.println("Title for selected date: " + title);
+                Event event = new Event(id, title, startDate, startTime, endDate, endTime, description);
+                titleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
+                startDateColumn.setCellValueFactory(new PropertyValueFactory<>("StartDate"));
+                startTimeColumn.setCellValueFactory(new PropertyValueFactory<>("StartTime"));
+                endDateColumn.setCellValueFactory(new PropertyValueFactory<>("EndDate"));
+                endTimeColumn.setCellValueFactory(new PropertyValueFactory<>("EndTime"));
+                descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("Description"));
+
+                eventTableView.getItems().add(event);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteEvent(int eventId) {
+        String query = "DELETE FROM event WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, eventId);
+            preparedStatement.executeUpdate(); // Execute the update query
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Stage getDialogStage() {       //per poter chiudere l'AddEventDialog
+        return dialogStage;
+    }
 }
+
