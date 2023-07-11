@@ -239,9 +239,10 @@ public class CalendarController {
         eventTableView.getItems().clear();
 
         LocalDate selectedDate = cell.getDate();
-        String query = "SELECT * FROM event WHERE StartDate = ? ";
+        String query = "SELECT * FROM event WHERE StartDate <= ? AND EndDate >= ? ";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setDate(1, Date.valueOf(selectedDate));
+            preparedStatement.setDate(2, Date.valueOf(selectedDate));
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {

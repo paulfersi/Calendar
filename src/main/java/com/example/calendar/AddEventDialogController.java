@@ -68,7 +68,7 @@ public class AddEventDialogController {
         LocalDate endDate = endDatePicker.getValue();
         boolean correct = true;
         Event event = null;
-        //per l'orario inserisco i due field "hours" e "minutes" in un LocalTime
+        /*per l'orario inserisco i due field "hours" e "minutes" in un LocalTime*/
         int sHours = -1;
         int sMinutes = -1;
         int eHours = -1;
