@@ -145,35 +145,41 @@ public class CalendarController {
 
             eventTableView.setStyle("-fx-text-fill: white;");
 
-            ButtonType removeButton = new ButtonType("Remove", ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType removeButton = new ButtonType("Remove", ButtonBar.ButtonData.APPLY);
             ButtonType addEventButton = new ButtonType("Add Event", ButtonBar.ButtonData.OK_DONE);
             dialog.getDialogPane().getButtonTypes().addAll(addEventButton, removeButton);
 
             /*STYLE*/
-            Button closeButtonNode = (Button) dialog.getDialogPane().lookupButton(removeButton);
+            Button removeButtonNode = (Button) dialog.getDialogPane().lookupButton(removeButton);
             Button addEventButtonNode = (Button) dialog.getDialogPane().lookupButton(addEventButton);
-            closeButtonNode.setStyle("-fx-text-fill: black;");
+            removeButtonNode.setStyle("-fx-text-fill: black;");
             addEventButtonNode.setStyle("-fx-text-fill: black;");
 
-            closeButtonNode.setStyle("-fx-background-color: #8EBBFF; -fx-text-fill: black;");
+            removeButtonNode.setStyle("-fx-background-color: #8EBBFF; -fx-text-fill: black;");
             addEventButtonNode.setStyle("-fx-background-color: #8EBBFF; -fx-text-fill: black;");
             /*-----------------------------------*/
 
             dialog.setResultConverter(buttonType -> {
                 if (buttonType == addEventButton) {
                     openDialogPane(cell);
+                    refreshTable(cell);
+                } else if (buttonType == removeButton) {
+                    removeEventDialog(cell);
                 }
                 return null;
             });
-            /*dialog.setResultConverter(buttonType -> {
-                if (buttonType == removeButton) {
-                   removeEventDialog(cell);
-                }
-                return null;
-            });*/
+
+            // Gestione dell'evento di chiusura della finestra
+            dialog.setOnCloseRequest(event -> dialog.close());
+
+            // Aggiungi un listener per gestire l'evento di chiusura della finestra principale
+            Stage primaryStage = (Stage) eventTableView.getScene().getWindow();
+            primaryStage.setOnCloseRequest(event -> dialog.close());
+
             dialog.showAndWait();
         }
     }
+
 
     void createTable() throws SQLException {
         String query = "CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, StartDate DATE, StartTime TIME, EndDate DATE, EndTime TIME, Description TEXT)";
