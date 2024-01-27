@@ -4,7 +4,7 @@
 
 This project is a calendar application developed using JavaFx. It utilizes a SQLite database for data storage and incorporates CSS styling in both the FXML file and Java code.
 
-![GUI](./calendar_image.pgn)
+<p align="center"><img src="images/calendar_image.png" alt="simplified demo architecture" width="700" class="center"/></p>
 
 ### Functionalities 
 
