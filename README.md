@@ -4,6 +4,8 @@
 
 This project is a calendar application developed using JavaFx. It utilizes a SQLite database for data storage and incorporates CSS styling in both the FXML file and Java code.
 
+![GUI](./calendar_image.pgn)
+
 ### Functionalities 
 
 The main view displays a monthly calendar with 42 cells, representing each day of the month, including the preceding and succeeding days. Clicking on a cell opens a daily view showing the events scheduled for that particular day.
