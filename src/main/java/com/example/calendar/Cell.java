@@ -5,10 +5,11 @@ import javafx.scene.control.TableView;
 
 import java.time.LocalDate;
 
-public class Matrix {
+public class Cell {
     int row;
     int col;
-    LocalDate Date;
+    LocalDate date;
+
     TableView<Event> eventTableView;
     TableColumn<Event, String> titleColumn;
     TableColumn<Event, String> startDateColumn;
@@ -19,40 +20,31 @@ public class Matrix {
     static final int NUM_ROWS = 6;
     static final int NUM_COLS = 7;
 
-    public Matrix(int row, int col) {
+    public Cell(int row, int col) {
         this.row = row;
         this.col = col;
     }
 
-    public Matrix(int row, int col, LocalDate date) {
-        this.row = row;
-        this.col = col;
-        Date = date;
 
-    }
-
-    public Matrix(LocalDate date) {
-        Date = date;
+    public Cell(LocalDate date) {
+        this.date = date;
     }
 
     public int getRow() {
         return row;
     }
 
-    public void setRow(int row) {
-        this.row = row;
-    }
 
     public int getCol() {
         return col;
     }
 
     public LocalDate getDate() {
-        return Date;
+        return date;
     }
 
     public void setDate(LocalDate date) {
-        Date = date;
+        this.date = date;
     }
 
     public TableView<Event> getEventTableView() {
@@ -100,8 +92,11 @@ public class Matrix {
     }
 
     public int getIndex() {
-        int ADJUSTMENT = 1;        //costante che fa si che si parta dalla cella d'indice 1, più utile per
-        //lavorare con le date (non esistendo il giorno 0)
+        int ADJUSTMENT = 1;
+        /**
+         * costante che fa in modo di partire dalla cella d'indice 1, più utile per
+         * lavorare con le date (non esistendo il giorno 0)
+         **/
         return row * NUM_COLS + col + ADJUSTMENT;
     }
 }

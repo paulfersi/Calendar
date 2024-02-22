@@ -4,7 +4,6 @@ import com.example.calendar.util.DataBaseUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -39,7 +38,7 @@ public class AddEventDialogController {
 
     Connection connection = DataBaseUtil.getConnection();
 
-    void setIntestation(Matrix cell) {
+    public void setIntestation(Cell cell) {
         dayLabel.setText(cell.getDate().getDayOfWeek().toString());
         dateLabel.setText(cell.getDate().toString());
         startDatePicker.setValue(cell.getDate());
@@ -169,7 +168,6 @@ public class AddEventDialogController {
         }
 
         if(correct){
-
             try {
                 if (event.startTime.isAfter(event.endTime) && event.getStartDate().isEqual(event.getEndDate())) {
                     /**verifico che non sia il caso in cui endDate sia un giorno diverso da startDate, solo in tal caso sarebbe accettabile che startTime sia dopo endTime **/
@@ -207,6 +205,5 @@ public class AddEventDialogController {
     void handleCancelButton(ActionEvent event) {
         CalendarController.getDialogStage().close();
     }
-
 
 }

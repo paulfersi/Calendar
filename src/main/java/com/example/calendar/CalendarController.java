@@ -61,10 +61,10 @@ public class CalendarController {
 
     @FXML
     private void handleAddButton() {
-        openDialogPane(new Matrix(LocalDate.now()));
+        openDialogPane(new Cell(LocalDate.now()));
     }
 
-    private void setSingleBox(Matrix cell, Text text, Color color) {
+    private void setSingleBox(Cell cell, Text text, Color color) {
         Font font = Font.font("sfProFont", FontWeight.BOLD, 18);
 
         cell.prepareTableView();        //NUOVO
@@ -97,10 +97,10 @@ public class CalendarController {
         int day_FollowingMonth = 1;
         int day_previousMonth = LocalDateUtil.getDayPreviousMonth(currentDate);
 
-        for (int row = 0; row < Matrix.NUM_ROWS; row++) {               //matrice
-            for (int col = 0; col < Matrix.NUM_COLS; col++) {
+        for (int row = 0; row < Cell.NUM_ROWS; row++) {               //matrice
+            for (int col = 0; col < Cell.NUM_COLS; col++) {
 
-                Matrix cell = new Matrix(row, col);
+                Cell cell = new Cell(row, col);
 
                 if (cell.getIndex() < LocalDateUtil.getStartOffset(currentDate)) {
                     /*previous month*/
@@ -127,7 +127,7 @@ public class CalendarController {
         }
     }
 
-    private void handleDayClick(Matrix cell) {
+    private void handleDayClick(Cell cell) {
         LocalDate selectedDate = cell.getDate();
         if (selectedDate != null) {
 
@@ -186,7 +186,7 @@ public class CalendarController {
         }
     }
 
-    private void openDialogPane(Matrix cell) {
+    private void openDialogPane(Cell cell) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(CalendarController.class.getResource("add-event-view.fxml"));
@@ -208,7 +208,7 @@ public class CalendarController {
         }
     }
 
-    private void removeEvent(Matrix cell) {
+    private void removeEvent(Cell cell) {
         TableView<Event> eventTableView = cell.getEventTableView();
 
         Event selectedEvent = eventTableView.getSelectionModel().getSelectedItem();
@@ -227,7 +227,7 @@ public class CalendarController {
        refreshTable(cell);
     }
 
-    private void refreshTable(Matrix cell) {
+    private void refreshTable(Cell cell) {
         TableView<Event> eventTableView = cell.getEventTableView();
         TableColumn<Event, String> titleColumn = cell.getTitleColumn();
         TableColumn<Event, String> startDateColumn = cell.getStartDateColumn();
