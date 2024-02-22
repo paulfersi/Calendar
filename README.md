@@ -14,15 +14,6 @@ To add an event, click on the "Add Event" button. To remove an event, click on t
 
 The event database is stored in the database.db file. I have included an example file with the code, which contains some pre-populated events. Feel free to delete it, so that when you launch the application, it generates a new empty file.
 
-### Installation
-
-To use this application, follow these steps:
-
-1. Clone the repository: git clone [https://github.com/paulfersi/Calendar.git](https://github.com/paulfersi/Calendar.git)
-2. Navigate to the project directory: cd Calendar
-3. Ensure you have JavaFX installed and properly configured.
-4. Build and run the project using your preferred Java IDE or the command line.
-
 ### Licence
 
 This code is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute it as you see fit.
